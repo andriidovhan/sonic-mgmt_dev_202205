@@ -1,6 +1,7 @@
-import sys
 import getopt
 import subprocess
+import sys
+
 import yaml
 
 # structure of yaml
@@ -52,7 +53,8 @@ def run_test():
 
 
 def main(argv):
-    help_msg = "./headgehog_custom_runner.py -t <topo: [{}]> -r <path to report dir>".format('|'.join(ALLOWED_TOPO))
+    help_msg = "./hedgehog_test_runner.py -t <topo: [{}]> -r <path to report dir>".format('|'.join(ALLOWED_TOPO))
+    found_t, found_r = False, False
     try:
         opts, args = getopt.getopt(argv, "ht:r:", ["topo=", "report_dir="])
     except getopt.GetoptError:
@@ -66,6 +68,7 @@ def main(argv):
         elif opt in ("-t", "--topo"):
             global TOPO
             TOPO = arg.lower()
+            found_t = True
             if TOPO not in ALLOWED_TOPO:
                 print(f"Topo: {TOPO}")
                 print('Error: incorrect topo')
@@ -74,6 +77,11 @@ def main(argv):
         elif opt in ("-r", "--report_dir"):
             global REPORT_DIR
             REPORT_DIR = arg
+            found_r = True
+    if not found_t or not found_r:
+        print("'--topo' or --'report_dir' is not passed")
+        print(help_msg)
+        sys.exit(2)
     read_yaml(PATH_TO_YAML)
     generate_test_list()
     build_cmd_to_run()
@@ -84,4 +92,3 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-

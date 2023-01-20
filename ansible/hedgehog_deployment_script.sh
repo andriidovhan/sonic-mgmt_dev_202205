@@ -25,7 +25,6 @@ remove_topo () {
     echo "TOPO is detected: $CURRENT_TOPO_CONTAINER"
     echo "Going to remove current topo"
     docker exec -i "$MGMT_CONTAINER" bash -c "cd /data/$SONIC_MGMT_REPO/ansible && ./testbed-cli.sh -t vtestbed.yaml -m veos_vtb -k veos remove-topo vms-kvm-t0 password.txt"
-    docker exec -i ptf_vms6-1 bash -c cd /data/sonic-mgmt_dev_202205/ansible && ./testbed-cli.sh -t vtestbed.yaml -m veos_vtb -k veos remove-topo vms-kvm-t0 password.txt
 fi
 }
 
@@ -36,8 +35,8 @@ deploy_topo () {
 }
 
 post_check () {
-  docker exec -i "$MGMT_CONTAINER" bash -c "cd /data/$SONIC_MGMT_REPO/tests && export ANSIBLE_CONFIG=../ansible; export ANSIBLE_LIBRARY=../ansible; pytest --inventory ../ansible/veos_vtb --host-pattern vlab-01 --testbed vms-kvm-t0 --testbed_file vtestbed.yaml --log-cli-level warning --log-file-level debug --showlocals --assert plain --show-capture no -rav --allow_recover --topology vs,any --module-path ../ansible/library --skip_sanity ./bgp/test_bgp_fact.py"
   echo "Verify env"
+  docker exec -i "$MGMT_CONTAINER" bash -c "cd /data/$SONIC_MGMT_REPO/tests && export ANSIBLE_CONFIG=../ansible; export ANSIBLE_LIBRARY=../ansible; pytest --inventory ../ansible/veos_vtb --host-pattern vlab-01 --testbed vms-kvm-t0 --testbed_file vtestbed.yaml --log-cli-level warning --log-file-level debug --showlocals --assert plain --show-capture no -rav --allow_recover --topology vs,any --module-path ../ansible/library --skip_sanity ./bgp/test_bgp_fact.py"
 
   if [ $? -eq 0 ]; then
     echo "Topo is deployed successfully."
